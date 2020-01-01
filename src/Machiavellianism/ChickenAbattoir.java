@@ -16,7 +16,7 @@ import java.util.List;
 
 @Script.Manifest(
     name="Chicken Abattoir",
-    properties="author=Machiavellianism; topic=1353781; client=4;",
+    properties="author=Machiavellianism; topic=1353799; client=4;",
     description="Slaughters chickens at the Lumbridge farm"
 )
 public class ChickenAbattoir extends PollingScript<ClientContext> implements PaintListener {
