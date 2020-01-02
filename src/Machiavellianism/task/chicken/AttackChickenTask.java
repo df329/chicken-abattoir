@@ -7,6 +7,7 @@ import org.powerbot.script.Area;
 import org.powerbot.script.Condition;
 import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Game;
 import org.powerbot.script.rt4.Npc;
 
 /**
@@ -74,7 +75,9 @@ public class AttackChickenTask extends Task<ClientContext> {
         // - player is behind a gate/wall/object
         // Player might die if auto-retaliate is off
         if (chicken.valid()) {
-            ctx.combat.autoRetaliate(true);
+            if (ctx.game.tab(Game.Tab.ATTACK)) {
+                ctx.combat.autoRetaliate(true);
+            }
             return 0;
         }
 
