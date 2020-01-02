@@ -1,6 +1,7 @@
 package Machiavellianism.util;
 
 import org.powerbot.script.rt4.ClientContext;
+import org.powerbot.script.rt4.Game;
 
 /**
  * Utility class for dropping items.
@@ -20,6 +21,8 @@ public class DropItemsUtil {
      * @param ctx client context
      */
     public static void DropAllUnwantedChickenLoot(ClientContext ctx) {
-        ctx.inventory.drop(ctx.inventory.select().id(UNWANTED_CHICKEN_LOOT));
+        if (ctx.game.tab(Game.Tab.INVENTORY)) {
+            ctx.inventory.drop(ctx.inventory.select().id(UNWANTED_CHICKEN_LOOT));
+        }
     }
 }
