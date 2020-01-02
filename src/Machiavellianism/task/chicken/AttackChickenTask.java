@@ -25,8 +25,9 @@ public class AttackChickenTask extends Task<ClientContext> {
     @Override
     public boolean activate() {
         return !ctx.players.local().inMotion()
+                && !ctx.players.local().healthBarVisible()
                 && ctx.players.local().animation() == CommonUtil.PLAYER_IDLE
-                && !ctx.players.local().healthBarVisible();
+                && ctx.combat.healthPercent() > 50;
     }
 
     @Override
