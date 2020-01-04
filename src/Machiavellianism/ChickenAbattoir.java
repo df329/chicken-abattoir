@@ -4,6 +4,7 @@ import Machiavellianism.task.Task;
 import Machiavellianism.task.antiban.AntiBanTask;
 import Machiavellianism.task.chicken.AttackChickenTask;
 import Machiavellianism.task.grounditem.TakeGroundItemTask;
+import Machiavellianism.ui.ChickenAbattoirSettingsUi;
 import Machiavellianism.ui.ChickenAbattoirSummaryUi;
 
 import org.powerbot.script.*;
@@ -29,6 +30,7 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     private int totalChickenFeathersPickedUp;
     private List<Task> taskList = new ArrayList<Task>();
     private static final long START_TIME = System.currentTimeMillis();
+    private ChickenAbattoirSettingsUi settingsUi;
 
     // Lumbridge chicken area, this does not encompass the gates or farm house
     private static final Area LUMBRIDGE_CHICKEN_AREA = new Area(
@@ -42,10 +44,12 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     public void start() {
         log.info("Welcome to the chicken abattoir at Lumbridge!");
 
+        settingsUi = new ChickenAbattoirSettingsUi();
+
         totalChickenFeathersPickedUp = 0;
         taskList.addAll(Arrays.asList(
                 new AttackChickenTask(ctx),
-                new TakeGroundItemTask(ctx),
+                new TakeGroundItemTask(ctx, settingsUi),
                 new AntiBanTask(ctx)
         ));
     }
@@ -54,16 +58,31 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     public void poll() {
         int ret;
 
+        if (!settingsUi.startScript()) {
+            return;
+        }
+
         // Actions are only valid within Lumbridge for now
         for (Task task : taskList) {
             if (task.activate()) {
+
+                // Execute the action
                 ret = task.execute(LUMBRIDGE_CHICKEN_AREA);
+
                 if (task.getClass().isAssignableFrom(TakeGroundItemTask.class)) {
                     totalChickenFeathersPickedUp += ret;
                 } else if (task.getClass().isAssignableFrom(AttackChickenTask.class)) {
                     totalChickensSlain += ret;
                 }
             }
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (settingsUi != null) {
+            settingsUi.frame.setVisible(false);
+            settingsUi = null;
         }
     }
 

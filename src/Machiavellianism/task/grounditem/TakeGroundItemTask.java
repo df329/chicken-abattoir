@@ -1,6 +1,7 @@
 package Machiavellianism.task.grounditem;
 
 import Machiavellianism.task.*;
+import Machiavellianism.ui.ISettingsUi;
 import Machiavellianism.util.*;
 
 import org.powerbot.script.Area;
@@ -12,9 +13,12 @@ import org.powerbot.script.rt4.GroundItem;
  */
 public class TakeGroundItemTask extends Task<ClientContext> {
     private static final int CHICKEN_FEATHER_ID = 314;
+    private ISettingsUi settings;
 
-    public TakeGroundItemTask(ClientContext ctx) {
+    public TakeGroundItemTask(ClientContext ctx, ISettingsUi settingsUi) {
         super(ctx);
+
+        settings = settingsUi;
     }
 
     /**
@@ -23,7 +27,9 @@ public class TakeGroundItemTask extends Task<ClientContext> {
      */
     @Override
     public boolean activate() {
-        boolean chickenFeathersExistInInventory = ctx.inventory.select().id(CHICKEN_FEATHER_ID).count(true) > 0;
+        if (!settings.pickupChickenFeathers()) {
+            return false;
+        }
 
         // Full inventory with feather is okay
         if (ctx.inventory.isFull()) {
@@ -32,6 +38,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
         }
 
         // Inventory is not full, chicken feather exists and player is idle
+        boolean chickenFeathersExistInInventory = ctx.inventory.select().id(CHICKEN_FEATHER_ID).count(true) > 0;
         return (!ctx.inventory.isFull() || chickenFeathersExistInInventory)
                 && !ctx.groundItems.select().id(CHICKEN_FEATHER_ID).isEmpty()
                 && ctx.players.local().animation() == CommonUtil.PLAYER_IDLE;
