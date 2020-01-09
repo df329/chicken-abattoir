@@ -88,7 +88,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
         System.out.println("Found a feather, picking it up...");
 
         WaitUntilPlayerIdleUtil.Wait(ctx);
-        chickenFeather.interact("Take");
+        chickenFeather.interact("Take", "Feather");
         WaitUntilPlayerIdleUtil.Wait(ctx, 1000, 2);
     }
 
