@@ -33,20 +33,14 @@ public class AttackChickenTask extends Task<ClientContext> {
 
     @Override
     public int execute(Area area) {
-        Npc chicken = null;
-
-        // Get the closes chicken that is not in combat
-        for (Npc c : ctx.npcs.within(area).select().id(CommonUtil.CHICKEN_IDS).nearest()) {
-            if (c.valid() && !c.healthBarVisible() && !c.interacting().valid()) {
-                chicken = c;
-                break;
-            }
-        }
-
-        if (chicken == null) {
+        // Get the closest chicken that is not in combat
+        ctx.npcs.within(area).select().select(npc -> !npc.healthBarVisible() && !npc.interacting().valid()).id(CommonUtil.CHICKEN_IDS).nearest();
+        if (ctx.npcs.isEmpty()) {
             System.out.println("No chickens found.");
             return 0;
         }
+
+        Npc chicken = ctx.npcs.poll();
 
         // Attack the chicken and wait until it is killed
         // Chicken can be killed on the first hit thus no player health bar
