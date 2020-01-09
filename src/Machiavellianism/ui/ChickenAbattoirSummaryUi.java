@@ -14,7 +14,7 @@ public class ChickenAbattoirSummaryUi {
      * @param graphics graphics to draw on
      * @param version script version
      * @param startTime start time of the script
-     * @param totalChickensSlain  total chickens slain
+     * @param totalChickensSlain total chickens slain
      * @param totalChickenFeathersPickedUp total chicken feathers picked up successfully
      */
     public static void ShowStatisticsSummary(
@@ -23,14 +23,10 @@ public class ChickenAbattoirSummaryUi {
             long startTime,
             int totalChickensSlain,
             int totalChickenFeathersPickedUp) {
-        int feathersPerHr = 0;
         long runningTime = System.currentTimeMillis() - startTime;
-        if (runningTime > HOURS.toMillis(1)) {
-            feathersPerHr = (int)(totalChickenFeathersPickedUp / (MILLISECONDS.toHours(runningTime)));
-        }
 
         // Background
-        graphics.setColor( new Color(0, 0, 0, 150));
+        graphics.setColor(new Color(0, 0, 0, 150));
         graphics.drawRect(0, 35, 180, 110);
         graphics.fillRect(0, 35, 180, 110);
 
@@ -41,22 +37,15 @@ public class ChickenAbattoirSummaryUi {
 
         // Version
         graphics.setFont(new Font("Arial", Font.PLAIN, 10));
-        graphics.setColor(Color.WHITE);
         graphics.drawString("v" + version + " - Machiavellianism", 10, 60);
 
         graphics.setFont(new Font("Arial", Font.PLAIN, 13));
 
         // Total picked up feathers
-        graphics.setColor(Color.WHITE);
         graphics.drawString("Feathers: " + totalChickenFeathersPickedUp, 10, 85);
 
-        // Total picked up feathers per hour
-        graphics.setColor(Color.WHITE);
-        graphics.drawString("Feathers/hr: " + feathersPerHr, 10, 100);
-
-        // Total picked up feathers
-        graphics.setColor(Color.WHITE);
-        graphics.drawString("Chickens slain: " + totalChickensSlain, 10, 115);
+        // Total chickens killed
+        graphics.drawString("Chickens slain: " + totalChickensSlain, 10, 100);
 
         // Running time
         int runtime = Integer.parseInt("" + runningTime);
