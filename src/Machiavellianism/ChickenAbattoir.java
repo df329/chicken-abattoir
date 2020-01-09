@@ -28,9 +28,9 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
 
     private int totalChickensSlain;
     private int totalChickenFeathersPickedUp;
-    private List<Task> taskList = new ArrayList<Task>();
-    private static final long START_TIME = System.currentTimeMillis();
     private ChickenAbattoirSettingsUi settingsUi;
+    private final List<Task> taskList = new ArrayList<>();
+    private static final long START_TIME = System.currentTimeMillis();
 
     // Lumbridge chicken area, this does not encompass the gates or farm house
     private static final Area LUMBRIDGE_CHICKEN_AREA = new Area(
@@ -81,7 +81,7 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     @Override
     public void stop() {
         if (settingsUi != null) {
-            settingsUi.frame.setVisible(false);
+            settingsUi.hide();
             settingsUi = null;
         }
     }

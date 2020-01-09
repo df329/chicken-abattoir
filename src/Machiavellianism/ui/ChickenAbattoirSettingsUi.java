@@ -9,8 +9,7 @@ public class ChickenAbattoirSettingsUi implements ISettingsUi {
     private static final String CHECKBOX_PICKUP_FEATHERS = "Pickup chicken feathers";
     private boolean startScript;
     private boolean pickupChickenFeathers;
-
-    public JFrame frame;
+    private final JFrame frame;
 
     public ChickenAbattoirSettingsUi() {
         startScript = false;
@@ -38,6 +37,13 @@ public class ChickenAbattoirSettingsUi implements ISettingsUi {
     }
 
     /**
+     * Hides the UI.
+     */
+    public void hide() {
+        frame.setVisible(false);
+    }
+
+    /**
      * @InheritDoc
      */
     public boolean startScript() {
@@ -53,7 +59,6 @@ public class ChickenAbattoirSettingsUi implements ISettingsUi {
 
     /**
      * Pick up chicken feathers setting.
-     * @param c checkbox
      * @return action listener
      */
     private ItemListener pickupFeathersCheckboxAction() {

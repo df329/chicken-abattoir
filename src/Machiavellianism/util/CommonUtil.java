@@ -7,7 +7,7 @@ import java.awt.*;
  */
 public class CommonUtil {
     public static final int PLAYER_IDLE = -1;
-    public static final int CHICKEN_IDS[] = {
+    public static final int[] CHICKEN_IDS = {
             1173,
             1174
     };

@@ -13,7 +13,7 @@ import org.powerbot.script.rt4.GroundItem;
  */
 public class TakeGroundItemTask extends Task<ClientContext> {
     private static final int CHICKEN_FEATHER_ID = 314;
-    private ISettingsUi settings;
+    private final ISettingsUi settings;
 
     public TakeGroundItemTask(ClientContext ctx, ISettingsUi settingsUi) {
         super(ctx);
@@ -51,7 +51,6 @@ public class TakeGroundItemTask extends Task<ClientContext> {
      */
     @Override
     public int execute(Area area) {
-        int chickenFeathersPickedUpCount = 0;
         GroundItem chickenFeather = ctx.groundItems.within(area).nearest().poll();
         if (!chickenFeather.valid()) {
             return 0;
@@ -67,7 +66,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
         }
 
         WaitBeforeAndAfterTakeChickenFeather(chickenFeather);
-        chickenFeathersPickedUpCount = ChickenFeathersPickedUpCount(oldChickenFeatherCount);
+        int chickenFeathersPickedUpCount = ChickenFeathersPickedUpCount(oldChickenFeatherCount);
 
         // Workaround to wait until taking chicken feather has completed
         if (chickenFeathersPickedUpCount > 0) {

@@ -20,7 +20,7 @@ public class AttackChickenTask extends Task<ClientContext> {
     }
 
     /**
-     * Attacks a chick if not in combat and idle.
+     * Attacks a chicken if not in combat and idle.
      * @return true to attack a chicken
      */
     @Override
@@ -34,7 +34,12 @@ public class AttackChickenTask extends Task<ClientContext> {
     @Override
     public int execute(Area area) {
         // Get the closest chicken that is not in combat
-        ctx.npcs.within(area).select().select(npc -> !npc.healthBarVisible() && !npc.interacting().valid()).id(CommonUtil.CHICKEN_IDS).nearest();
+        ctx.npcs
+                .within(area)
+                .select()
+                .select(npc -> !npc.healthBarVisible() && !npc.interacting().valid())
+                .id(CommonUtil.CHICKEN_IDS)
+                .nearest();
         if (ctx.npcs.isEmpty()) {
             System.out.println("No chickens found.");
             return 0;
@@ -72,6 +77,7 @@ public class AttackChickenTask extends Task<ClientContext> {
             if (ctx.game.tab(Game.Tab.ATTACK)) {
                 ctx.combat.autoRetaliate(true);
             }
+
             return 0;
         }
 
