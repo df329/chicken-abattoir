@@ -74,8 +74,8 @@ public class AttackChickenTask extends Task<ClientContext> {
         // - player is behind a gate/wall/object
         // Player might die if auto-retaliate is off
         if (chicken.valid()) {
-            if (ctx.game.tab(Game.Tab.ATTACK)) {
-                ctx.combat.autoRetaliate(true);
+            if (!ctx.combat.autoRetaliate() && ctx.game.tab(Game.Tab.ATTACK)) {
+                enableAutoRetaliateWithDelays();
             }
 
             return 0;
@@ -85,5 +85,18 @@ public class AttackChickenTask extends Task<ClientContext> {
         System.out.println("...");
         Condition.sleep(Random.nextInt(50, 250));
         return 1;
+    }
+
+    /**
+     * Enable auto-retaliate and go back to inventory.
+     */
+    private void enableAutoRetaliateWithDelays() {
+        Condition.sleep(Random.nextInt(250, 500));
+
+        ctx.combat.autoRetaliate(true);
+
+        Condition.sleep(Random.nextInt(50, 250));
+
+        ctx.input.send("{VK_ESCAPE}");
     }
 }
