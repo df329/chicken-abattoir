@@ -26,64 +26,53 @@ public class AttackChickenTask extends Task<ClientContext> {
     @Override
     public boolean activate() {
         return !ctx.players.local().inMotion()
-                && !ctx.players.local().healthBarVisible()
                 && ctx.players.local().animation() == CommonUtil.PLAYER_IDLE
                 && ctx.combat.healthPercent() > 50;
     }
 
     @Override
     public int execute(Area area) {
+        boolean chickenKilled = false;
+
         // Get the closest chicken that is not in combat
-        ctx.npcs
-                .within(area)
-                .select()
-                .select(npc -> !npc.healthBarVisible() && !npc.interacting().valid())
-                .id(CommonUtil.CHICKEN_IDS)
-                .nearest();
+        ctx.npcs.select().within(area).select(npc -> !npc.healthBarVisible() && !npc.interacting().valid()).id(CommonUtil.CHICKEN_IDS).nearest();
         if (ctx.npcs.isEmpty()) {
             System.out.println("No chickens found.");
+            System.out.println("...");
             return 0;
         }
 
         Npc chicken = ctx.npcs.poll();
 
-        // Attack the chicken and wait until it is killed
-        // Chicken can be killed on the first hit thus no player health bar
-        chicken.interact("Attack");
-        System.out.println("Attacking chicken.");
-        if (!Condition.wait(() -> ctx.players.local().healthBarVisible(), 200, 20)) {
-            System.out.println("Not in combat still, moving on...");
-            System.out.println("...");
-            return chicken.valid() && chicken.healthBarVisible() ? 0 : 1;
-        }
-
-        // Periodically attack the chicken in case
-        // Or if the chicken hasn't been killed in 30s, attack again
-        for (int i = 0, retries = 0; i < 60 && retries < 3 && (chicken.valid() && chicken.healthBarVisible()); i++) {
-            Condition.sleep(500);
-            if (i == 59 && chicken.valid()) {
-                chicken.interact("Attack");
-                i = 0;
-                retries++;
-                System.out.println("Attempting to attack chicken again.");
-            }
-        }
-
+        // Periodically attack the chicken if it is still not dead (limit 5 times = 30s)
         // The chicken isn't dead due the possible scenarios:
         // - player has intervened input and moved away
         // - player is behind a gate/wall/object
+        // - mis-click due to chicken moving
         // Player might die if auto-retaliate is off
-        if (chicken.valid()) {
-            if (!ctx.combat.autoRetaliate() && ctx.game.tab(Game.Tab.ATTACK)) {
-                enableAutoRetaliateWithDelays();
+        int i = 0;
+        for (; i < 15 && !chickenKilled; i++) {
+            if (i == 0 || !ctx.players.local().healthBarVisible()) {
+                System.out.println("Attacking chicken.");
+                chicken.interact("Attack", "Chicken");
             }
 
+            // Check if the chicken is dying else enable auto-retaliate if disabled (2s)
+            if (Condition.wait(() -> chicken.animation() == 5389 || !chicken.valid(), 50, 40)) {
+                chickenKilled = true;
+            } else if (!ctx.combat.autoRetaliate() && ctx.game.tab(Game.Tab.ATTACK)) {
+                enableAutoRetaliateWithDelays();
+            }
+        }
+
+        if (!chickenKilled) {
+            System.out.println("Unable to kill chicken.");
+            System.out.println("...");
             return 0;
         }
 
         System.out.println("Chicken slaughtered.");
         System.out.println("...");
-        Condition.sleep(Random.nextInt(50, 250));
         return 1;
     }
 
@@ -91,11 +80,12 @@ public class AttackChickenTask extends Task<ClientContext> {
      * Enable auto-retaliate and go back to inventory.
      */
     private void enableAutoRetaliateWithDelays() {
-        Condition.sleep(Random.nextInt(250, 500));
+        System.out.printf("Enable auto-retaliate.");
+        Condition.sleep(Random.nextInt(250, 400));
 
         ctx.combat.autoRetaliate(true);
 
-        Condition.sleep(Random.nextInt(50, 250));
+        Condition.sleep(Random.nextInt(50, 100));
 
         ctx.input.send("{VK_ESCAPE}");
     }

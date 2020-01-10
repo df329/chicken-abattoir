@@ -23,7 +23,7 @@ import java.util.List;
 public class ChickenAbattoir extends PollingScript<ClientContext> implements PaintListener {
     // Version
     private static final int MAJOR_VERSION = 1;
-    private static final int MINOR_VERSION = 1;
+    private static final int MINOR_VERSION = 2;
     private static final int PATCH_VERSION = 1;
 
     private int totalChickensSlain;
