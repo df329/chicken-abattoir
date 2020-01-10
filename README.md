@@ -14,19 +14,6 @@ OSRS bot for slaughtering chickens and looting their remains! This was heavily b
 git clone https://github.com/df329/chicken-abattoir.git
 ```
 
-## Future
+## Feedback
 
-* Some randomness for anti-ban
-  * Camera rotation
-  * Mouse movements
-  * Walking/idle actions
-* Attack mode configuration
-* Door/gate issues
-  * Difficult, probably some localization needed
-* Maybe cooking food
-* Maybe bury bones
-* Display combat statistics
-
-## Known limitations
-
-* Picking up feathers is mandatory for now
+Please discuss on the [Powerbot forums](https://www.powerbot.org/community/topic/1353799-osrs-chicken-abattoir/).
