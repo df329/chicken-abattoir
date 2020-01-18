@@ -12,7 +12,6 @@ import org.powerbot.script.rt4.ClientContext;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 
 @Script.Manifest(
@@ -26,11 +25,11 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     private static final int MINOR_VERSION = 2;
     private static final int PATCH_VERSION = 1;
 
+    private static final long START_TIME = System.currentTimeMillis();
     private int totalChickensSlain;
     private int totalChickenFeathersPickedUp;
     private ChickenAbattoirSettingsUi settingsUi;
-    private final List<Task> taskList = new ArrayList<>();
-    private static final long START_TIME = System.currentTimeMillis();
+    private List<Task> taskList;
 
     // Lumbridge chicken area, this does not encompass the gates or farm house
     private static final Area LUMBRIDGE_CHICKEN_AREA = new Area(
@@ -44,35 +43,35 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
     public void start() {
         log.info("Welcome to the chicken abattoir at Lumbridge!");
 
-        settingsUi = new ChickenAbattoirSettingsUi();
+        this.settingsUi = new ChickenAbattoirSettingsUi();
 
-        totalChickenFeathersPickedUp = 0;
-        taskList.addAll(Arrays.asList(
+        this.totalChickenFeathersPickedUp = 0;
+        this.taskList = Arrays.asList(
                 new AttackChickenTask(ctx),
-                new TakeGroundItemTask(ctx, settingsUi),
+                new TakeGroundItemTask(ctx, this.settingsUi),
                 new AntiBanTask(ctx)
-        ));
+        );
     }
 
     @Override
     public void poll() {
         int ret;
 
-        if (!settingsUi.startScript()) {
+        if (!this.settingsUi.startScript()) {
             return;
         }
 
         // Actions are only valid within Lumbridge for now
-        for (Task task : taskList) {
+        for (Task task : this.taskList) {
             if (task.activate()) {
 
                 // Execute the action
                 ret = task.execute(LUMBRIDGE_CHICKEN_AREA);
 
                 if (task.getClass().isAssignableFrom(TakeGroundItemTask.class)) {
-                    totalChickenFeathersPickedUp += ret;
+                    this.totalChickenFeathersPickedUp += ret;
                 } else if (task.getClass().isAssignableFrom(AttackChickenTask.class)) {
-                    totalChickensSlain += ret;
+                    this.totalChickensSlain += ret;
                 }
             }
         }
@@ -80,9 +79,9 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
 
     @Override
     public void stop() {
-        if (settingsUi != null) {
-            settingsUi.hide();
-            settingsUi = null;
+        if (this.settingsUi != null) {
+            this.settingsUi.hide();
+            this.settingsUi = null;
         }
     }
 
@@ -92,8 +91,8 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
                 graphics,
                 MAJOR_VERSION + "." + MINOR_VERSION + "." + PATCH_VERSION,
                 START_TIME,
-                totalChickensSlain,
-                totalChickenFeathersPickedUp
+                this.totalChickensSlain,
+                this.totalChickenFeathersPickedUp
         );
     }
 }

@@ -1,6 +1,10 @@
 package Machiavellianism.ui;
 
+/**
+ * Interface for the settings UI screen.
+ */
 public interface ISettingsUi {
+
     /**
      * Starts the script else it will nop.
      * @return true to start the script
