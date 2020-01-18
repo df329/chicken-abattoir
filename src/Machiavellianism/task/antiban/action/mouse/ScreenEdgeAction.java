@@ -8,14 +8,15 @@ import org.powerbot.script.Random;
 import org.powerbot.script.rt4.ClientContext;
 
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * Moves the mouse to the edge of the screen.
  */
 public class ScreenEdgeAction extends AntiBanAction {
 
-    public ScreenEdgeAction(ClientContext ctx) {
-        super(ctx);
+    public ScreenEdgeAction(ClientContext ctx, Logger logger) {
+        super(ctx, logger);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ScreenEdgeAction extends AntiBanAction {
                 break;
         }
 
-        System.out.println("Moving mouse to the edge of the screen.");
+        this.logger.info("Moving mouse to the edge of the screen.");
 
         this.ctx.input.move(new Point(x, y));
     }

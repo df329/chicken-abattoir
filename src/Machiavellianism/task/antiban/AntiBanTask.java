@@ -13,6 +13,7 @@ import org.powerbot.script.rt4.ClientContext;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Class implementing anti-ban actions.
@@ -20,12 +21,12 @@ import java.util.List;
 public class AntiBanTask extends Task<ClientContext> {
     private final List<IAntiBanAction> antiBanActions;
 
-    public AntiBanTask(ClientContext ctx) {
-        super(ctx);
+    public AntiBanTask(ClientContext ctx, Logger logger) {
+        super(ctx, logger);
 
         this.antiBanActions = Arrays.asList(
-                new ChickenFocusAction(ctx),
-                new ScreenEdgeAction(ctx)
+                new ChickenFocusAction(ctx, logger),
+                new ScreenEdgeAction(ctx, logger)
         );
     }
 
@@ -52,7 +53,7 @@ public class AntiBanTask extends Task<ClientContext> {
             if (Random.nextInt(0, 10) == 3) {
                 action.Move(area);
                 numberOfAntiBanActions++;
-                Condition.sleep(Random.nextInt(50, 1500));
+                Condition.sleep(Random.nextInt(500, 1500));
             }
         }
 

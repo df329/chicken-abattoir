@@ -10,13 +10,15 @@ import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.Game;
 import org.powerbot.script.rt4.Npc;
 
+import java.util.logging.Logger;
+
 /**
  * Attack a chicken task.
  */
 public class AttackChickenTask extends Task<ClientContext> {
 
-    public AttackChickenTask(ClientContext ctx) {
-        super(ctx);
+    public AttackChickenTask(ClientContext ctx, Logger logger) {
+        super(ctx, logger);
     }
 
     /**
@@ -37,8 +39,8 @@ public class AttackChickenTask extends Task<ClientContext> {
         // Get the closest chicken that is not in combat
         ctx.npcs.select().within(area).select(npc -> !npc.healthBarVisible() && !npc.interacting().valid()).id(CommonUtil.CHICKEN_IDS).nearest();
         if (ctx.npcs.isEmpty()) {
-            System.out.println("No chickens found.");
-            System.out.println("...");
+            this.logger.info("No chickens found.");
+            this.logger.info("...");
             return 0;
         }
 
@@ -50,10 +52,9 @@ public class AttackChickenTask extends Task<ClientContext> {
         // - player is behind a gate/wall/object
         // - mis-click due to chicken moving
         // Player might die if auto-retaliate is off
-        int i = 0;
-        for (; i < 15 && !chickenKilled; i++) {
+        for (int i = 0; i < 15 && !chickenKilled; i++) {
             if (i == 0 || !ctx.players.local().healthBarVisible()) {
-                System.out.println("Attacking chicken.");
+                this.logger.info("Attacking chicken.");
                 chicken.interact("Attack", "Chicken");
             }
 
@@ -66,13 +67,13 @@ public class AttackChickenTask extends Task<ClientContext> {
         }
 
         if (!chickenKilled) {
-            System.out.println("Unable to kill chicken.");
-            System.out.println("...");
+            this.logger.warning("Unable to kill chicken.");
+            this.logger.info("...");
             return 0;
         }
 
-        System.out.println("Chicken slaughtered.");
-        System.out.println("...");
+        this.logger.info("Chicken slaughtered.");
+        this.logger.info("...");
         return 1;
     }
 
@@ -80,7 +81,7 @@ public class AttackChickenTask extends Task<ClientContext> {
      * Enable auto-retaliate and go back to inventory.
      */
     private void enableAutoRetaliateWithDelays() {
-        System.out.printf("Enable auto-retaliate.");
+        this.logger.info("Enable auto-retaliate.");
         Condition.sleep(Random.nextInt(250, 400));
 
         ctx.combat.autoRetaliate(true);

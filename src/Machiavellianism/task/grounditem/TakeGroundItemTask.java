@@ -8,6 +8,8 @@ import org.powerbot.script.Area;
 import org.powerbot.script.rt4.ClientContext;
 import org.powerbot.script.rt4.GroundItem;
 
+import java.util.logging.Logger;
+
 /**
  * Take ground item (chicken feather) task.
  */
@@ -15,8 +17,8 @@ public class TakeGroundItemTask extends Task<ClientContext> {
     private static final int CHICKEN_FEATHER_ID = 314;
     private final ISettingsUi settings;
 
-    public TakeGroundItemTask(ClientContext ctx, ISettingsUi settingsUi) {
-        super(ctx);
+    public TakeGroundItemTask(ClientContext ctx, Logger logger, ISettingsUi settingsUi) {
+        super(ctx, logger);
 
         settings = settingsUi;
     }
@@ -33,7 +35,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
 
         // Full inventory with feather is okay
         if (ctx.inventory.isFull()) {
-            System.out.println("Inventory full: dropping unwanted chicken loot.");
+            this.logger.info("Inventory full: dropping unwanted chicken loot.");
             DropItemsUtil.DropAllUnwantedChickenLoot(ctx);
         }
 
@@ -60,7 +62,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
 
         // Move to the chicken feather if necessary
         if (!chickenFeather.inViewport()) {
-            System.out.println("Moving to chicken feather.");
+            this.logger.info("Moving to chicken feather.");
             ctx.camera.turnTo(chickenFeather);
             ctx.movement.step(chickenFeather);
         }
@@ -70,12 +72,12 @@ public class TakeGroundItemTask extends Task<ClientContext> {
 
         // Workaround to wait until taking chicken feather has completed
         if (chickenFeathersPickedUpCount > 0) {
-            System.out.println("Successful.");
+            this.logger.info("Successful.");
         } else {
-            System.out.println("Picking up chicken feather was unsuccessful.");
+            this.logger.warning("Picking up chicken feather was unsuccessful.");
         }
 
-        System.out.println("...");
+        this.logger.info("...");
         return chickenFeathersPickedUpCount;
     }
 
@@ -84,7 +86,7 @@ public class TakeGroundItemTask extends Task<ClientContext> {
      * @param chickenFeather chicken feather to pick up
      */
     private void WaitBeforeAndAfterTakeChickenFeather(GroundItem chickenFeather) {
-        System.out.println("Found a feather, picking it up...");
+        this.logger.info("Found a feather, picking it up...");
 
         WaitUntilPlayerIdleUtil.Wait(ctx);
         chickenFeather.interact("Take", "Feather");

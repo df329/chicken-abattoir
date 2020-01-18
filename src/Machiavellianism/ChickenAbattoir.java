@@ -47,9 +47,9 @@ public class ChickenAbattoir extends PollingScript<ClientContext> implements Pai
 
         this.totalChickenFeathersPickedUp = 0;
         this.taskList = Arrays.asList(
-                new AttackChickenTask(ctx),
-                new TakeGroundItemTask(ctx, this.settingsUi),
-                new AntiBanTask(ctx)
+                new AttackChickenTask(ctx, log),
+                new TakeGroundItemTask(ctx, log, this.settingsUi),
+                new AntiBanTask(ctx, log)
         );
     }
 
